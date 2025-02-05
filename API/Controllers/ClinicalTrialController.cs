@@ -1,5 +1,6 @@
 ﻿using Application.Queries;
 using Domain.Entities;
+using Infrastructure.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
@@ -16,21 +17,22 @@ namespace API.Controllers
         {
             _mediator = mediator;
         }
-        [HttpPost("AddMedicalTrial")]
-        public async Task<IActionResult> AddMedicalTrial(IFormFile file)
-        {
-            //TODo Validaiton for file
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded.");
 
-            if (Path.GetExtension(file.FileName).ToLower() != ".json")
-                return BadRequest("Only .json files are allowed.");
+        [HttpPost("AddMedicalTrial")]
+        public async Task<IActionResult> AddMedicalTrial([FromForm] UploadJsonFileRequestDTO request)
+        {
+            ////TODo Validaiton for file
+            //if (file == null || file.Length == 0)
+            //    return BadRequest("No file uploaded.");
+
+            //if (Path.GetExtension(file.FileName).ToLower() != ".json")
+            //    return BadRequest("Only .json files are allowed.");
 
             try
             {
 
                 using var stream = new MemoryStream();
-                await file.CopyToAsync(stream);
+                await request.File.CopyToAsync(stream);
                 stream.Position = 0;
 
                 using var reader = new StreamReader(stream, Encoding.UTF8);
@@ -38,7 +40,7 @@ namespace API.Controllers
 
 
 
-                return Ok();
+                return Ok(new { message = "File uploaded successfully", content = fileContent });
             }
             catch (Exception)
             {

@@ -1,8 +1,11 @@
 using Application.Handlers.CommandHandlers;
 using Domain.Entities;
 using Domain.Repositories;
+using FluentValidation.AspNetCore;
 using Infrastructure.Persistance;
 using Infrastructure.Repositories;
+using Infrastructure.Validators;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +19,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ICommandRepository<ClinicalTrial>, ClinicalTrialCommandRepository>();
 builder.Services.AddScoped<IQueryRepository<ClinicalTrial>, ClinicalTrialQueryRepository>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<SaveTrialHandler>());
-/*builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));*/
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
+builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UploadJsonFileValidator>());
+//builder.Services.AddValidatorsFromAssemblyContaining<UploadJsonFileValidator>();
 
 var app = builder.Build();
 

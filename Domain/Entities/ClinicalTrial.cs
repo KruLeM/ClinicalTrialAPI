@@ -1,10 +1,12 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Domain.Entities
 {
     public class ClinicalTrial
     {
         [JsonPropertyName("trialId")]
+        [Key]
         public string TrialId { get; set; }
 
         [JsonPropertyName("title")]
@@ -17,7 +19,7 @@ namespace Domain.Entities
         public DateTime? EndDate { get; set; }
 
         [JsonPropertyName("participants")]
-        public int? Participants { get; set; }
+        public int Participants { get; set; }
 
         [JsonPropertyName("status")]
         public TrialStatus Status { get; set; }

@@ -12,7 +12,7 @@ namespace Application.Commands
         string Title,
         DateTime StartDate,
         DateTime? EndDate,
-        int? Participants,
+        int Participants,
         string Status
     ) : IRequest<ClinicalTrial>;
 }
