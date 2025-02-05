@@ -14,7 +14,6 @@ namespace Infrastructure.Validators
         public UploadJsonFileValidator()
         {
             // Define the JSON Schema
-            //string schemaPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "clinical-trial-json-shema.json");
             string schemaPath = Path.Combine(AppContext.BaseDirectory, "Resources", "clinical-trial-json-shema.json");
             if (!File.Exists(schemaPath))
             {
@@ -24,6 +23,7 @@ namespace Infrastructure.Validators
             string schemaContent = File.ReadAllText(schemaPath);
             _jsonSchema = JSchema.Parse(schemaContent);
 
+            //Validation
             RuleFor(x => x.File)
                 .NotNull().WithMessage("File is required.")
                 .Must(file => file.Length > 0).WithMessage("File is empty.")

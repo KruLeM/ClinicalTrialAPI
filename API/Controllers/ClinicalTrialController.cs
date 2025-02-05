@@ -11,6 +11,7 @@ namespace API.Controllers
     [ApiController]
     public class ClinicalTrialController : ControllerBase
     {
+        //TODO -> Add validaitons for GET endpoints
         private readonly IMediator _mediator;
 
         public ClinicalTrialController(IMediator mediator)
@@ -21,13 +22,6 @@ namespace API.Controllers
         [HttpPost("AddMedicalTrial")]
         public async Task<IActionResult> AddMedicalTrial([FromForm] UploadJsonFileRequestDTO request)
         {
-            ////TODo Validaiton for file
-            //if (file == null || file.Length == 0)
-            //    return BadRequest("No file uploaded.");
-
-            //if (Path.GetExtension(file.FileName).ToLower() != ".json")
-            //    return BadRequest("Only .json files are allowed.");
-
             try
             {
 
@@ -38,7 +32,7 @@ namespace API.Controllers
                 using var reader = new StreamReader(stream, Encoding.UTF8);
                 string fileContent = await reader.ReadToEndAsync();
 
-
+                //TODO - logika za SAVE
 
                 return Ok(new { message = "File uploaded successfully", content = fileContent });
             }
@@ -65,7 +59,6 @@ namespace API.Controllers
         {
             try
             {
-                //TODO - validation for trial id, null or empty string not allowed
                 var response = await _mediator.Send(new GetTrialByTrialIdQuery(trialId));
                 if(response == null)
                 {
@@ -84,8 +77,6 @@ namespace API.Controllers
         {
             try
             {
-                //TODO - validation for status, null or empty string not allowed
-                //TODO - validation if 
                 if (!Enum.IsDefined(typeof(TrialStatus), status))
                 {
                     return BadRequest("Invalid parameter");
