@@ -15,7 +15,7 @@ namespace Application.Handlers.QueryHandlers
 
         public async Task<List<ClinicalTrial>> Handle(GetTrialByStatusQuery request, CancellationToken cancellationToken)
         {
-            return (List<ClinicalTrial>) await _queryRepository.GetTrialsAsync(request.status);
+            return (List<ClinicalTrial>) await _queryRepository.GetByStatusAsync(request.status.ToString());
         }
     }
 }

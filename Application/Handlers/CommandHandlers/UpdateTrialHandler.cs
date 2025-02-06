@@ -24,15 +24,15 @@ namespace Application.Handlers.CommandHandlers
         {
             try
             {
-                var dbTrial = await _queryRepository.GetTrialAsync(request.TrialId);
+                var dbTrial = await _queryRepository.GetByIdAsync(request.TrialId);
                 if (string.IsNullOrEmpty(dbTrial?.TrialId))
                 {
                     _logger.LogError(request.TrialId, $"Exception occured in handler: {nameof(UpdateTrialHandler)}. TrialId don't exists in db");
                     throw new TrialDataException("TrialId don't exists in db");
                 }
 
-                TrialStatus trialStatus = Enum.Parse<TrialStatus>(request.Status.Replace(" ", ""));
-                DateOnly? endDate = request.EndDate;
+                var trialStatus = Enum.Parse<TrialStatus>(request.Status.Replace(" ", ""));
+                var endDate = request.EndDate;
 
                 if (!CommonHandlerHelper.CheckTrialEndDateValue(request.StartDate, endDate, trialStatus, out string validationMessage))
                 {
@@ -41,7 +41,9 @@ namespace Application.Handlers.CommandHandlers
                 }
 
                 if (!endDate.HasValue && trialStatus == TrialStatus.Ongoing)
+                {
                     endDate = request.StartDate.AddMonths(1);
+                }
 
                 dbTrial.TrialId = request.TrialId;
                 dbTrial.Title = request.Title;

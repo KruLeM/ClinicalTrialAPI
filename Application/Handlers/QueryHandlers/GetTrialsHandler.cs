@@ -15,7 +15,7 @@ namespace Application.Handlers.QueryHandlers
 
         public async Task<List<ClinicalTrial>> Handle(GetTrialsQuery request, CancellationToken cancellationToken)
         {
-            return (List<ClinicalTrial>)await _queryRepository.GetAllTrialsAsync();
+            return (List<ClinicalTrial>)await _queryRepository.GetAllAsync();
         }
     }
 }

@@ -17,7 +17,6 @@ namespace Infrastructure.Test.Validators
             _validator = new UploadJsonFileValidator();
         }
 
-
         private IFormFile CreateMockFile(string content, string fileName = "test.json", long length = 1024)
         {
             var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));

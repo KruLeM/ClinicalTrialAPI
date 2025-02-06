@@ -27,20 +27,13 @@ namespace API.Controllers
         {
             try
             {
-                using var stream = new MemoryStream();
-                await request.File.CopyToAsync(stream);
-                stream.Position = 0;
-
-                using var reader = new StreamReader(stream, Encoding.UTF8);
-                string fileContent = await reader.ReadToEndAsync();
-
-                var command = JsonConvert.DeserializeObject<AddTrialCommand>(fileContent);
-                if (command == null)
+                var addTrial = await ReadAndDeserializeJson<AddTrialCommand>(request);
+                if (addTrial == null)
                 {
                     return BadRequest("Invalid JSON structure.");
                 }
 
-                var result = await _mediator.Send(command);
+                var result = await _mediator.Send(addTrial);
 
                 return CreatedAtAction(nameof(GetTrial), new { trialId = result?.TrialId }, result);
             }
@@ -58,20 +51,13 @@ namespace API.Controllers
         {
             try
             {
-                using var stream = new MemoryStream();
-                await request.File.CopyToAsync(stream);
-                stream.Position = 0;
-
-                using var reader = new StreamReader(stream, Encoding.UTF8);
-                string fileContent = await reader.ReadToEndAsync();
-
-                var command = JsonConvert.DeserializeObject<UpdateTrialCommand>(fileContent);
-                if (command == null)
+                var updateTrial = await ReadAndDeserializeJson<UpdateTrialCommand>(request);
+                if (updateTrial == null)
                 {
                     return BadRequest("Invalid JSON structure.");
                 }
 
-                var result = await _mediator.Send(command);
+                var result = await _mediator.Send(updateTrial);
 
                 return Ok("Successful update");
             }
@@ -84,7 +70,6 @@ namespace API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
         }
-
 
         [HttpGet(nameof(GetAllTrials))]
         public async Task<IActionResult> GetAllTrials()
@@ -121,12 +106,11 @@ namespace API.Controllers
         {
             try
             {
-                if (!Enum.IsDefined(typeof(TrialStatus), status))
+                if (!Enum.IsDefined(typeof(TrialStatus), status.Replace(" ", "")))
                 {
                     return BadRequest("Invalid parameter");
                 }
-                Enum.TryParse<TrialStatus>(status, out var trialStatus);
-                var response = await _mediator.Send(new GetTrialByStatusQuery(trialStatus));
+                var response = await _mediator.Send(new GetTrialByStatusQuery(status));
                 if (response == null)
                 {
                     return NotFound();
@@ -140,5 +124,16 @@ namespace API.Controllers
             }
         }
 
+        private async Task<T> ReadAndDeserializeJson<T>(UploadJsonFileRequestDTO request) where T : class
+        {
+            using var stream = new MemoryStream();
+            await request.File.CopyToAsync(stream);
+            stream.Position = 0;
+
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            string fileContent = await reader.ReadToEndAsync();
+
+            return JsonConvert.DeserializeObject<T>(fileContent);
+        }
     }
 }

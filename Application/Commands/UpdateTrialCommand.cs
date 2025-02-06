@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Commands
 {
-    public record UpdateTrialCommand (
+    public record UpdateTrialCommand(
         string TrialId,
         string Title,
         DateOnly StartDate,

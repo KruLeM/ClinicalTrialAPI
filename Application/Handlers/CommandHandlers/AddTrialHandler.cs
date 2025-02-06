@@ -24,24 +24,26 @@ namespace Application.Handlers.CommandHandlers
         {
             try
             {
-                var dbTrial = await _queryRepository.GetTrialAsync(request.TrialId);
+                var dbTrial = await _queryRepository.GetByIdAsync(request.TrialId);
                 if (!string.IsNullOrEmpty(dbTrial?.TrialId))
                 {
                     _logger.LogError(request.TrialId, $"Exception occured in handler: {nameof(AddTrialHandler)}. TrialId aready exists in db");
                     throw new TrialDataException("TrialId already exists in db");
                 }
 
-                TrialStatus trialStatus = Enum.Parse<TrialStatus>(request.Status.Replace(" ", ""));
-                DateOnly? endDate = request.EndDate;
-                
+                var trialStatus = Enum.Parse<TrialStatus>(request.Status.Replace(" ", ""));
+                var endDate = request.EndDate;
+
                 if (!CommonHandlerHelper.CheckTrialEndDateValue(request.StartDate, endDate, trialStatus, out string validationMessage))
                 {
                     _logger.LogError(request.TrialId, $"Exception occured in handler: {nameof(AddTrialHandler)}. {validationMessage}");
                     throw new TrialDataException(validationMessage);
                 }
-                
+
                 if (!endDate.HasValue && trialStatus == TrialStatus.Ongoing)
+                {
                     endDate = request.StartDate.AddMonths(1);
+                }
 
                 var trial = new ClinicalTrial
                 {

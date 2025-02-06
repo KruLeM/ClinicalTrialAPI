@@ -13,22 +13,21 @@ namespace Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<ClinicalTrial>> GetAllTrialsAsync()
+        public async Task<IEnumerable<ClinicalTrial>> GetAllAsync()
         {
+            //todo - ne vraca enum string nego enum int
             return await _dbContext.ClinicalTrials.AsNoTracking().ToListAsync();
         }
 
-        public async Task<ClinicalTrial> GetTrialAsync(string trialId)
+        public async Task<ClinicalTrial> GetByIdAsync(string trialId)
         {
-            return await _dbContext.ClinicalTrials
-                .FirstOrDefaultAsync(x => x.TrialId == trialId);
+            return await _dbContext.ClinicalTrials.FirstOrDefaultAsync(x => x.TrialId == trialId);
         }
 
-        //ToDo -> i saw someone doing this with IQueryable...
-        public async Task<IEnumerable<ClinicalTrial>> GetTrialsAsync(TrialStatus trialStatus)
+        public async Task<IEnumerable<ClinicalTrial>> GetByStatusAsync(string trialStatus)
         {
-            IQueryable<ClinicalTrial> query = _dbContext.ClinicalTrials.Where(x => x.Status == trialStatus);
-            return await query.ToListAsync();
+            var trialStatusEnum = Enum.Parse<TrialStatus>(trialStatus.Replace(" ", ""));
+            return await _dbContext.ClinicalTrials.Where(x => x.Status == trialStatusEnum).ToListAsync();
         }
     }
 }
