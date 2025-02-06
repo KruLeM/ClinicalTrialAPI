@@ -2,7 +2,7 @@
 {
     public enum TrialStatus
     {
-        Not_Started = 1,
+        NotStarted = 1,
         Ongoing,
         Completed
     }

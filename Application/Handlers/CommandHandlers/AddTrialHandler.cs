@@ -1,4 +1,5 @@
 ﻿using Application.Commands;
+using Application.Exceptions;
 using Domain.Entities;
 using Domain.Repositories;
 using MediatR;
@@ -12,7 +13,7 @@ namespace Application.Handlers.CommandHandlers
         private readonly IQueryRepository<ClinicalTrial> _queryRepository;
         private readonly ILogger _logger;
 
-        public AddTrialHandler(ICommandRepository<ClinicalTrial> commandRepository, IQueryRepository<ClinicalTrial> queryRepository, ILogger logger)
+        public AddTrialHandler(ICommandRepository<ClinicalTrial> commandRepository, IQueryRepository<ClinicalTrial> queryRepository, ILogger<AddTrialHandler> logger)
         {
             _commandRepository = commandRepository;
             _queryRepository = queryRepository;
@@ -26,11 +27,19 @@ namespace Application.Handlers.CommandHandlers
                 var dbTrial = await _queryRepository.GetTrialAsync(request.TrialId);
                 if (!string.IsNullOrEmpty(dbTrial?.TrialId))
                 {
-                    throw new Exception("TrialId already exists in db");
+                    _logger.LogError(request.TrialId, $"Exception occured in handler: {nameof(AddTrialHandler)}. TrialId aready exists in db");
+                    throw new TrialDataException("TrialId already exists in db");
                 }
 
-                TrialStatus trialStatus = Enum.Parse<TrialStatus>(request.Status);
+                TrialStatus trialStatus = Enum.Parse<TrialStatus>(request.Status.Replace(" ", ""));
                 DateOnly? endDate = request.EndDate;
+                
+                if (!CommonHandlerHelper.CheckTrialEndDateValue(request.StartDate, endDate, trialStatus, out string validationMessage))
+                {
+                    _logger.LogError(request.TrialId, $"Exception occured in handler: {nameof(AddTrialHandler)}. {validationMessage}");
+                    throw new TrialDataException(validationMessage);
+                }
+                
                 if (!endDate.HasValue && trialStatus == TrialStatus.Ongoing)
                     endDate = request.StartDate.AddMonths(1);
 
@@ -42,7 +51,9 @@ namespace Application.Handlers.CommandHandlers
                     EndDate = endDate,
                     Participants = request.Participants,
                     Status = trialStatus,
-                    Duration = endDate.HasValue ? (Convert.ToDateTime(endDate) - Convert.ToDateTime(request.StartDate)).Days : 0
+                    Duration = endDate.HasValue
+                                ? (endDate.Value.ToDateTime(TimeOnly.MinValue) - request.StartDate.ToDateTime(TimeOnly.MinValue)).Days
+                                : 0
                 };
 
                 var result = await _commandRepository.AddTrialAsync(trial);

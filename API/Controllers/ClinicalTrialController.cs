@@ -1,4 +1,5 @@
 ﻿using Application.Commands;
+using Application.Exceptions;
 using Application.Queries;
 using Domain.Entities;
 using Infrastructure.DTOs;
@@ -41,14 +42,18 @@ namespace API.Controllers
 
                 var result = await _mediator.Send(command);
 
-                return CreatedAtAction(nameof(GetTrial) + $"?trialId={result?.TrialId}", result);
+                return CreatedAtAction(nameof(GetTrial), new { trialId = result?.TrialId }, result);
+            }
+            catch (TrialDataException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
         }
-        [HttpPost(nameof(UpdateMedicalTrial))]
+        [HttpPut(nameof(UpdateMedicalTrial))]
         public async Task<IActionResult> UpdateMedicalTrial([FromForm] UploadJsonFileRequestDTO request)
         {
             try
@@ -68,7 +73,11 @@ namespace API.Controllers
 
                 var result = await _mediator.Send(command);
 
-                return CreatedAtAction(nameof(GetTrial) + $"?trialId={result?.TrialId}", result);
+                return Ok("Successful update");
+            }
+            catch (TrialDataException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
