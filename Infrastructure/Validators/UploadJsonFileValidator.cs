@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Infrastructure.DTOs;
+using Infrastructure.Validation;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -13,7 +14,6 @@ namespace Infrastructure.Validators
 
         public UploadJsonFileValidator()
         {
-            // Define the JSON Schema
             string schemaPath = Path.Combine(AppContext.BaseDirectory, "Resources", "clinical-trial-json-shema.json");
             if (!File.Exists(schemaPath))
             {
@@ -23,10 +23,10 @@ namespace Infrastructure.Validators
             string schemaContent = File.ReadAllText(schemaPath);
             _jsonSchema = JSchema.Parse(schemaContent);
 
-            //Validation
             RuleFor(x => x.File)
                 .NotNull().WithMessage("File is required.")
                 .Must(file => file.Length > 0).WithMessage("File is empty.")
+                .Must(file => file.Length <= ValidationConsts.MaxFileSizeInBytes).WithMessage("File size must not exceed 2 KB.")
                 .Must(file => Path.GetExtension(file.FileName).ToLower() == ".json").WithMessage("Only .json files are allowed.")
                 .Must(ValidateJsonSchema).WithMessage("Invalid JSON format according to schema.")
              ;
@@ -43,13 +43,12 @@ namespace Infrastructure.Validators
                 using var reader = new StreamReader(stream, Encoding.UTF8);
                 string fileContent = reader.ReadToEnd();
 
-                // Parse JSON and Validate
                 var jsonObject = JObject.Parse(fileContent);
                 return jsonObject.IsValid(_jsonSchema, out IList<string> _);
             }
             catch
             {
-                return false; // Invalid JSON structure
+                return false;
             }
         }
     }

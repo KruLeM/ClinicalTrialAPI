@@ -1,8 +1,10 @@
-﻿using Application.Queries;
+﻿using Application.Commands;
+using Application.Queries;
 using Domain.Entities;
 using Infrastructure.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Text;
 
 namespace API.Controllers
@@ -19,12 +21,11 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("AddMedicalTrial")]
+        [HttpPost(nameof(AddMedicalTrial))]
         public async Task<IActionResult> AddMedicalTrial([FromForm] UploadJsonFileRequestDTO request)
         {
             try
             {
-
                 using var stream = new MemoryStream();
                 await request.File.CopyToAsync(stream);
                 stream.Position = 0;
@@ -32,17 +33,51 @@ namespace API.Controllers
                 using var reader = new StreamReader(stream, Encoding.UTF8);
                 string fileContent = await reader.ReadToEndAsync();
 
-                //TODO - logika za SAVE
+                var command = JsonConvert.DeserializeObject<AddTrialCommand>(fileContent);
+                if (command == null)
+                {
+                    return BadRequest("Invalid JSON structure.");
+                }
 
-                return Ok(new { message = "File uploaded successfully", content = fileContent });
+                var result = await _mediator.Send(command);
+
+                return CreatedAtAction(nameof(GetTrial) + $"?trialId={result?.TrialId}", result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while processing your request.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
+        }
+        [HttpPost(nameof(UpdateMedicalTrial))]
+        public async Task<IActionResult> UpdateMedicalTrial([FromForm] UploadJsonFileRequestDTO request)
+        {
+            try
+            {
+                using var stream = new MemoryStream();
+                await request.File.CopyToAsync(stream);
+                stream.Position = 0;
+
+                using var reader = new StreamReader(stream, Encoding.UTF8);
+                string fileContent = await reader.ReadToEndAsync();
+
+                var command = JsonConvert.DeserializeObject<UpdateTrialCommand>(fileContent);
+                if (command == null)
+                {
+                    return BadRequest("Invalid JSON structure.");
+                }
+
+                var result = await _mediator.Send(command);
+
+                return CreatedAtAction(nameof(GetTrial) + $"?trialId={result?.TrialId}", result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
         }
 
-        [HttpGet("GetAllTrials")]
+
+        [HttpGet(nameof(GetAllTrials))]
         public async Task<IActionResult> GetAllTrials()
         {
             try
@@ -51,16 +86,16 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while processing your request.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
         }
-        [HttpGet("GetTrial")]
+        [HttpGet(nameof(GetTrial))]
         public async Task<IActionResult> GetTrial(string trialId)
         {
             try
             {
                 var response = await _mediator.Send(new GetTrialByTrialIdQuery(trialId));
-                if(response == null)
+                if (response == null)
                 {
                     return NotFound();
                 }
@@ -69,10 +104,10 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while processing your request.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
         }
-        [HttpGet("GetTrials")]
+        [HttpGet(nameof(GetTrials))]
         public async Task<IActionResult> GetTrials(string status)
         {
             try
@@ -92,7 +127,7 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred while processing your request.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
         }
 

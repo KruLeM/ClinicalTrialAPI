@@ -13,10 +13,10 @@ namespace Domain.Entities
         public string Title { get; set; }
 
         [JsonPropertyName("startDate")]
-        public DateTime StartDate { get; set; }
+        public DateOnly StartDate { get; set; }
 
         [JsonPropertyName("endDate")]
-        public DateTime? EndDate { get; set; }
+        public DateOnly? EndDate { get; set; }
 
         [JsonPropertyName("participants")]
         public int Participants { get; set; }
