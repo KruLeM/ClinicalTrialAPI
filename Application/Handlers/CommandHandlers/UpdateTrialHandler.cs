@@ -36,7 +36,9 @@ namespace Application.Handlers.CommandHandlers
                 var trialStatus = Enum.Parse<TrialStatus>(request.Status.Replace(" ", ""));
                 var endDate = request.EndDate;
 
-                if (!CommonHandlerHelper.CheckTrialEndDateValue(request.StartDate, endDate, trialStatus, out string validationMessage))
+                string validationMessage = "";
+                if (!CommonHandlerHelper.CheckTrialEndDateValue(request.StartDate, endDate, trialStatus, out validationMessage)
+                    || !CommonHandlerHelper.CheckTrialIdLength(request.TrialId, out validationMessage))
                 {
                     _logger.LogError(request.TrialId, $"Exception occured in handler: {nameof(UpdateTrialHandler)}. {validationMessage}");
                     throw new TrialDataException(validationMessage);

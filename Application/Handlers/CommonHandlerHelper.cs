@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Application.Handlers
 {
@@ -6,16 +7,40 @@ namespace Application.Handlers
     {
         public static bool CheckTrialEndDateValue(DateOnly startDate, DateOnly? endDate, TrialStatus trialStatus, out string message)
         {
-            message = "";
+            message = string.Empty;
 
-            if (!endDate.HasValue && trialStatus == TrialStatus.Completed)
+            if (!endDate.HasValue)
             {
-                message = "End date can't be null";
+                if (trialStatus == TrialStatus.Completed)
+                {
+                    message = "End date is required for completed trials.";
+                    return false;
+                }
+                return true;
+            }
+
+            if (endDate.Value < startDate)
+            {
+                message = "End date must be greater than or equal to start date.";
                 return false;
             }
-            if (endDate.HasValue && endDate < startDate)
+
+            return true;
+        }
+
+        public static bool CheckTrialIdLength(string trialId, out string message)
+        {
+            message = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(trialId))
             {
-                message = "End date must be greated or equal as start date";
+                message = "TrialId cannot be empty.";
+                return false;
+            }
+
+            if (trialId.Length > 450)
+            {
+                message = $"TrialId exceeds the maximum length of 450 characters (current: {trialId.Length}).";
                 return false;
             }
 
