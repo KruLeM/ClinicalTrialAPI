@@ -35,7 +35,7 @@ namespace Infrastructure.Test.Validators
         public void Should_Have_Error_When_File_Is_Null()
         {
             // Arrange
-            var model = new UploadJsonFileRequestDTO { File = null };
+            var model = new UploadJsonFileRequestDTO();
 
             // Act
             var result = _validator.TestValidate(model);
@@ -64,7 +64,7 @@ namespace Infrastructure.Test.Validators
         public void Should_Have_Error_When_File_Size_Exceeds_Limit()
         {
             // Arrange
-            var file = CreateMockFile("{}", length: 3000); // Exceeds 2KB limit
+            var file = CreateMockFile("{}", length: 3000);
             var model = new UploadJsonFileRequestDTO { File = file };
 
             // Act
@@ -72,7 +72,7 @@ namespace Infrastructure.Test.Validators
 
             // Assert
             result.ShouldHaveValidationErrorFor(x => x.File)
-                  .WithErrorMessage("File size must not exceed 2 KB.");
+                  .WithErrorMessage("File to large.");
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace Infrastructure.Test.Validators
         public void Should_Have_Error_When_Invalid_Json_Format()
         {
             // Arrange
-            var file = CreateMockFile("{ invalid json }"); // Malformed JSON
+            var file = CreateMockFile("{ invalid json }");
             var model = new UploadJsonFileRequestDTO { File = file };
 
             // Act
@@ -109,7 +109,7 @@ namespace Infrastructure.Test.Validators
         public void Should_Pass_When_Valid_Json_File()
         {
             // Arrange
-            var validJson = "{ \"trialId\": \"123a\", \"title\": \"M&M test 1\" }";
+            var validJson = "{ \"trialId\": \"123e\", \"title\": \"Test 1b\",\"startDate\": \"2025-02-07\",\"participants\": 15,\"status\": \"Not Started\" }";
             var file = CreateMockFile(validJson);
             var model = new UploadJsonFileRequestDTO { File = file };
 

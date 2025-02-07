@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using Infrastructure.DTOs;
-using Infrastructure.Validation;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -24,6 +23,7 @@ namespace Infrastructure.Validation.Validators
             _jsonSchema = JSchema.Parse(schemaContent);
 
             RuleFor(x => x.File)
+                .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage("File is required.")
                 .Must(file => file.Length > 0).WithMessage("File is empty.")
                 .Must(file => file.Length <= ValidationConstants.MaxFileSizeInBytes).WithMessage("File to large.")
