@@ -72,7 +72,7 @@ namespace Infrastructure.Test.Validators
 
             // Assert
             result.ShouldHaveValidationErrorFor(x => x.File)
-                  .WithErrorMessage("File to large.");
+                  .WithErrorMessage("File exceeds the maximum allowed size.");
         }
 
         [Fact]

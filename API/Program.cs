@@ -2,11 +2,11 @@ using Application.Handlers.CommandHandlers;
 using Domain.Entities;
 using Domain.Repositories;
 using FluentValidation.AspNetCore;
-using Application.DTOs;
 using Infrastructure.Persistance;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Validation.Validators;
+using API.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +22,10 @@ builder.Services.AddScoped<IQueryRepository<ClinicalTrial>, ClinicalTrialQueryRe
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddTrialHandler>());
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UploadJsonFileValidator>());
-//builder.Services.AddValidatorsFromAssemblyContaining<UploadJsonFileValidator>();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

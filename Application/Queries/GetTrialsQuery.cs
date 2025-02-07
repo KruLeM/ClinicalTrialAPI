@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Queries
 {
-    public record GetTrialsQuery : IRequest<List<ClinicalTrialDTO>>;
+    public record GetTrialsQuery : IRequest<IEnumerable<ClinicalTrialDTO>>;
 }

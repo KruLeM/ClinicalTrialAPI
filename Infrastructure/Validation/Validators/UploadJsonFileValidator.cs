@@ -25,9 +25,9 @@ namespace Infrastructure.Validation.Validators
             RuleFor(x => x.File)
                 .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage("File is required.")
-                .Must(file => file.Length > 0).WithMessage("File is empty.")
-                .Must(file => file.Length <= ValidationConstants.MaxFileSizeInBytes).WithMessage("File to large.")
                 .Must(file => Path.GetExtension(file.FileName).ToLower() == ".json").WithMessage("Only .json files are allowed.")
+                .Must(file => file.Length > 0).WithMessage("File is empty.")
+                .Must(file => file.Length <= ValidationConstants.MaxFileSizeInBytes).WithMessage("File exceeds the maximum allowed size.")
                 .Must(ValidateJsonSchema).WithMessage("Invalid JSON format according to schema.");
         }
         private bool ValidateJsonSchema(IFormFile file)

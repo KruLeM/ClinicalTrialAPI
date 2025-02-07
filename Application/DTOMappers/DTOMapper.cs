@@ -8,6 +8,11 @@ namespace Application.DTOMappers
     {
         public static IEnumerable<ClinicalTrialDTO> EntitiesToDTOs(IEnumerable<ClinicalTrial> clinicalTrials)
         {
+            if (clinicalTrials == null)
+            {
+                return null;
+            }
+
             return clinicalTrials.Select(ct => new ClinicalTrialDTO
             {
                 TrialId = ct.TrialId,
@@ -22,6 +27,11 @@ namespace Application.DTOMappers
 
         public static ClinicalTrialDTO EntityToDTO(ClinicalTrial ct)
         {
+            if (ct == null)
+            {
+                return null;
+            }
+
             return new ClinicalTrialDTO
             {
                 TrialId = ct.TrialId,

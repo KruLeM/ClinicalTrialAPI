@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250205151544_InitialCreate")]
+    [Migration("20250207181148_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -34,16 +34,16 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("Duration")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2")
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date")
                         .HasAnnotation("Relational:JsonPropertyName", "endDate");
 
-                    b.Property<int?>("Participants")
+                    b.Property<int>("Participants")
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "participants");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2")
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date")
                         .HasAnnotation("Relational:JsonPropertyName", "startDate");
 
                     b.Property<int>("Status")
