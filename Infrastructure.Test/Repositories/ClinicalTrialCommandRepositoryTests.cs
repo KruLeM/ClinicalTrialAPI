@@ -1,20 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
-using Application.Exceptions;
+﻿using Application.Exceptions;
 using Domain.Entities;
 using Infrastructure.Persistance;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Moq.EntityFrameworkCore;
-using Xunit;
 
 namespace Infrastructure.Test.Repositories
 {
     public class ClinicalTrialCommandRepositoryTests
     {
-        
         private readonly ClinicalTrialCommandRepository _repository;
         private readonly AppDbContext _dbContext;
         private readonly Mock<ILogger<ClinicalTrialCommandRepository>> _mockLogger;
@@ -78,8 +73,6 @@ namespace Infrastructure.Test.Repositories
             Assert.Equal("Updated Trial", result.Title);
         }
 
-       
-
         [Fact]
         public async Task AddTrialAsync_ShouldThrowRepositoryException_OnException()
         {
@@ -97,7 +90,15 @@ namespace Infrastructure.Test.Repositories
 
             // Act & Assert
             await Assert.ThrowsAsync<RepositoryException>(() => _repository.AddTrialAsync(trial));
-            _mockLogger.Verify(l => l.LogError(It.IsAny<Exception>(), It.IsAny<string>()), Times.Once);
+            _mockLogger.Verify(l =>
+               l.Log(
+                   LogLevel.Error,
+                   It.IsAny<EventId>(),
+                   It.Is<It.IsAnyType>((v, t) => true),
+                   It.IsAny<Exception>(),
+                   (Func<It.IsAnyType, Exception?, string>)It.IsAny<object>()
+               ),
+               Times.Once);
         }
 
         [Fact]
@@ -119,9 +120,16 @@ namespace Infrastructure.Test.Repositories
 
             // Act & Assert
             await Assert.ThrowsAsync<RepositoryException>(() => _repository.UpdateTrialAsync(trial));
-            _mockLogger.Verify(l => l.LogError(It.IsAny<Exception>(), It.IsAny<string>()), Times.Once);
+            _mockLogger.Verify(l =>
+                l.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => true),
+                    It.IsAny<Exception>(),
+                    (Func<It.IsAnyType, Exception?, string>)It.IsAny<object>()
+                ),
+                Times.Once);
+            //_mockLogger.Verify(l => l.LogError(It.IsAny<Exception>(), It.IsAny<string>()), Times.Once);
         }
-
-        
     }
 }
