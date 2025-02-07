@@ -1,7 +1,6 @@
 ﻿using Application.DTOMappers;
 using Application.DTOs;
 using Application.Exceptions;
-using Application.Handlers.CommandHandlers;
 using Application.Queries;
 using Domain.Entities;
 using Domain.Repositories;

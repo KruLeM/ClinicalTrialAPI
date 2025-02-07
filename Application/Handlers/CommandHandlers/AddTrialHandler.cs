@@ -62,7 +62,7 @@ namespace Application.Handlers.CommandHandlers
 
                 return ClinicalTrialDTOMapper.EntityToDTO(await _commandRepository.AddTrialAsync(trial));
             }
-            catch (RepositoryException dbEx)
+            catch (RepositoryException ex)
             {
                 throw;
             }

@@ -31,8 +31,22 @@ namespace Infrastructure.Test.Repositories
             // Arrange
             var trials = new List<ClinicalTrial>
             {
-                new ClinicalTrial { TrialId = "Test1", Title = "Trial 1", StartDate = new DateOnly(2025,02,06) , Status = TrialStatus.NotStarted },
-                new ClinicalTrial { TrialId = "Test2", Title = "Trial 2", StartDate = new DateOnly(2025,02,06), EndDate = new DateOnly(2025,03,06), Participants = 15, Status = TrialStatus.Ongoing, Duration = 30 }
+                new ClinicalTrial {
+                    TrialId = Guid.NewGuid().ToString(),
+                    Title = "Trial 1",
+                    StartDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(5),
+                    Participants = It.IsAny<int>(),
+                    Status = TrialStatus.NotStarted
+                },
+                new ClinicalTrial {
+                    TrialId = Guid.NewGuid().ToString(),
+                    Title = "Trial 2",
+                    StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                    EndDate = DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(2),
+                    Participants = It.IsAny<int>(),
+                    Status = TrialStatus.Ongoing,
+                    Duration = 30
+                }
             };
             await _dbContext.ClinicalTrials.AddRangeAsync(trials);
             await _dbContext.SaveChangesAsync();
@@ -48,16 +62,24 @@ namespace Infrastructure.Test.Repositories
         public async Task GetByIdAsync_ShouldReturnCorrectTrial()
         {
             // Arrange
-            var trial = new ClinicalTrial { TrialId = "Test1", Title = "Trial 1", StartDate = new DateOnly(2025, 03, 06), Status = TrialStatus.NotStarted, Participants = 5 };
+            string trialId = Guid.NewGuid().ToString();
+            var trial = new ClinicalTrial
+            {
+                TrialId = trialId,
+                Title = "Trial 1",
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(15),
+                Status = TrialStatus.NotStarted,
+                Participants = It.IsAny<int>()
+            };
             await _dbContext.ClinicalTrials.AddAsync(trial);
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByIdAsync("Test1");
+            var result = await _repository.GetByIdAsync(trialId);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("Test1", result.TrialId);
+            Assert.Equal(trialId, result.TrialId);
         }
 
         [Fact]
@@ -76,8 +98,22 @@ namespace Infrastructure.Test.Repositories
             // Arrange
             var trials = new List<ClinicalTrial>
             {
-                new ClinicalTrial { TrialId = "Test1", Title = "Trial 1", StartDate = new DateOnly(2025,03,06), Participants = 50, Status = TrialStatus.NotStarted },
-                new ClinicalTrial { TrialId = "Test2", Title = "Trial 2", StartDate = new DateOnly(2025,02,06), EndDate = new DateOnly(2025,03,06), Participants = 15, Status = TrialStatus.Ongoing, Duration = 30 }
+                new ClinicalTrial {
+                    TrialId = Guid.NewGuid().ToString(),
+                    Title = "Trial 1",
+                    StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                    Participants = It.IsAny<int>(),
+                    Status = TrialStatus.NotStarted
+                },
+                new ClinicalTrial {
+                    TrialId = Guid.NewGuid().ToString(),
+                    Title = "Trial 2",
+                    StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                    EndDate = DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(1),
+                    Participants = It.IsAny<int>(),
+                    Status = TrialStatus.Ongoing,
+                    Duration = 30
+                }
             };
             await _dbContext.ClinicalTrials.AddRangeAsync(trials);
             await _dbContext.SaveChangesAsync();
@@ -105,10 +141,10 @@ namespace Infrastructure.Test.Repositories
         }
 
         [Fact]
-        public async Task GetAllAsync_ShouldThrowRepositoryException_OnException()
+        public async Task GetAllAsync_ShouldThrowRepositoryException_OnConnectionCrush()
         {
             // Arrange
-            _dbContext.Dispose(); // Simulate DB failure
+            _dbContext.Dispose();
 
             // Act & Assert
             await Assert.ThrowsAsync<RepositoryException>(() => _repository.GetAllAsync());

@@ -5,8 +5,8 @@ using FluentValidation.AspNetCore;
 using Application.DTOs;
 using Infrastructure.Persistance;
 using Infrastructure.Repositories;
-using Infrastructure.Validators;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Validation.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 

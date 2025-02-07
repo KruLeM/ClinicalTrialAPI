@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System.Text;
 
-namespace Infrastructure.Validators
+namespace Infrastructure.Validation.Validators
 {
     public class UploadJsonFileValidator : AbstractValidator<UploadJsonFileRequestDTO>
     {

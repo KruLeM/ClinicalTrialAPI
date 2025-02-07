@@ -31,9 +31,9 @@ namespace Infrastructure.Test.Repositories
             // Arrange
             var trial = new ClinicalTrial
             {
-                TrialId = "Test1",
+                TrialId = Guid.NewGuid().ToString(),
                 Title = "Trial test add 1",
-                StartDate = new DateOnly(2025, 02, 07),
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10),
                 EndDate = null,
                 Status = TrialStatus.NotStarted,
                 Duration = null
@@ -54,11 +54,12 @@ namespace Infrastructure.Test.Repositories
             // Arrange
             var trial = new ClinicalTrial
             {
-                TrialId = "Test1",
+                TrialId = Guid.NewGuid().ToString(),
                 Title = "Trial test update 1",
-                StartDate = new DateOnly(2025, 02, 07),
-                EndDate = new DateOnly(2025, 03, 07),
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1),
+                EndDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(15),
                 Status = TrialStatus.Ongoing,
+                Participants = It.IsAny<int>(),
                 Duration = 30
             };
             _dbContext.ClinicalTrials.Add(trial);
@@ -74,19 +75,20 @@ namespace Infrastructure.Test.Repositories
         }
 
         [Fact]
-        public async Task AddTrialAsync_ShouldThrowRepositoryException_OnException()
+        public async Task AddTrialAsync_ShouldThrowRepositoryException_OnConnectionCrash()
         {
             // Arrange
             var trial = new ClinicalTrial
             {
-                TrialId = "Test1",
+                TrialId = Guid.NewGuid().ToString(),
                 Title = "Trial test add error 1",
-                StartDate = new DateOnly(2025, 02, 07),
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
                 EndDate = null,
                 Status = TrialStatus.NotStarted,
+                Participants = It.IsAny<int>(),
                 Duration = null
             };
-            _dbContext.Dispose(); // Simulate DB failure
+            _dbContext.Dispose();
 
             // Act & Assert
             await Assert.ThrowsAsync<RepositoryException>(() => _repository.AddTrialAsync(trial));
@@ -102,21 +104,22 @@ namespace Infrastructure.Test.Repositories
         }
 
         [Fact]
-        public async Task UpdateTrialAsync_ShouldThrowRepositoryException_OnException()
+        public async Task UpdateTrialAsync_ShouldThrowRepositoryException_OnConnectionCrash()
         {
             // Arrange
             var trial = new ClinicalTrial
             {
-                TrialId = "Test1",
+                TrialId = Guid.NewGuid().ToString(),
                 Title = "Trial test update 1",
-                StartDate = new DateOnly(2025, 02, 07),
-                EndDate = new DateOnly(2025, 03, 07),
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                EndDate = DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(1),
                 Status = TrialStatus.Ongoing,
+                Participants = It.IsAny<int>(),
                 Duration = 30
             };
             _dbContext.ClinicalTrials.Add(trial);
             await _dbContext.SaveChangesAsync();
-            _dbContext.Dispose(); // Simulate DB failure
+            _dbContext.Dispose();
 
             // Act & Assert
             await Assert.ThrowsAsync<RepositoryException>(() => _repository.UpdateTrialAsync(trial));
@@ -129,7 +132,6 @@ namespace Infrastructure.Test.Repositories
                     (Func<It.IsAnyType, Exception?, string>)It.IsAny<object>()
                 ),
                 Times.Once);
-            //_mockLogger.Verify(l => l.LogError(It.IsAny<Exception>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

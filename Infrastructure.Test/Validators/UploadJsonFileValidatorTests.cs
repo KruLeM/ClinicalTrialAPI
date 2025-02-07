@@ -1,6 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Infrastructure.DTOs;
-using Infrastructure.Validators;
+using Infrastructure.Validation.Validators;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System.Text;
