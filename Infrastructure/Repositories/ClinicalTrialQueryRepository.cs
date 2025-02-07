@@ -3,15 +3,19 @@ using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories
 {
     public class ClinicalTrialQueryRepository : IQueryRepository<ClinicalTrial>
     {
         private readonly AppDbContext _dbContext;
-        public ClinicalTrialQueryRepository(AppDbContext dbContext)
+        private readonly ILogger _logger;
+
+        public ClinicalTrialQueryRepository(AppDbContext dbContext, ILogger<ClinicalTrialQueryRepository> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<ClinicalTrial>> GetAllAsync()
@@ -24,6 +28,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Exception occurred while retrieving data. Repository: {nameof(ClinicalTrialQueryRepository)}, method: {nameof(GetAllAsync)}.");
                 throw new RepositoryException("Error occurred while getting data from db.", ex);
             }
         }
@@ -38,6 +43,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Exception occurred while retrieving data. Repository: {nameof(ClinicalTrialQueryRepository)}, method: {nameof(GetByIdAsync)}.");
                 throw new RepositoryException("Error occurred while getting data from db.", ex);
             }
         }
@@ -53,6 +59,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, $"Exception occurred while retrieving data. Repository: {nameof(ClinicalTrialQueryRepository)}, method: {nameof(GetByStatusAsync)}.");
                 throw new RepositoryException("Error occurred while getting data from db.", ex);
             }
         }

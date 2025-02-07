@@ -26,9 +26,8 @@ namespace Application.Handlers.QueryHandlers
             {
                 return ClinicalTrialDTOMapper.EntitiesToDTOs(await _queryRepository.GetByStatusAsync(request.status.ToString()));
             }
-            catch (RepositoryException dbEx)
+            catch (RepositoryException ex)
             {
-                _logger.LogError(dbEx, $"Exception occurred while retrieving data in handler: {nameof(GetTrialByStatusHandler)}.");
                 throw;
             }
             catch (Exception ex)

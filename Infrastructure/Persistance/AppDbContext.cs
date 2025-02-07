@@ -7,7 +7,7 @@ namespace Infrastructure.Persistance
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
      
-        public DbSet<ClinicalTrial> ClinicalTrials { get; set; }
+        public virtual DbSet<ClinicalTrial> ClinicalTrials { get; set; }
 
     }
 }

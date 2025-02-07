@@ -64,7 +64,6 @@ namespace Application.Handlers.CommandHandlers
             }
             catch (RepositoryException dbEx)
             {
-                _logger.LogError(dbEx, $"Exception occurred while saving data in handler: {nameof(AddTrialHandler)}.");
                 throw;
             }
             catch (Exception ex)
