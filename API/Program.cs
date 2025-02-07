@@ -2,6 +2,7 @@ using Application.Handlers.CommandHandlers;
 using Domain.Entities;
 using Domain.Repositories;
 using FluentValidation.AspNetCore;
+using Application.DTOs;
 using Infrastructure.Persistance;
 using Infrastructure.Repositories;
 using Infrastructure.Validators;

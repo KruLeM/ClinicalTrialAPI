@@ -1,7 +1,7 @@
-﻿using Domain.Entities;
+﻿using Application.DTOs;
 using MediatR;
 
 namespace Application.Queries
 {
-    public record GetTrialsQuery : IRequest<List<ClinicalTrial>>;
+    public record GetTrialsQuery : IRequest<List<ClinicalTrialDTO>>;
 }

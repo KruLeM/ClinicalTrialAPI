@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Application.DTOs;
 using MediatR;
 
 namespace Application.Commands
@@ -10,5 +10,5 @@ namespace Application.Commands
         DateOnly? EndDate,
         int Participants,
         string Status
-    ) : IRequest<ClinicalTrial>;
+    ) : IRequest<ClinicalTrialDTO>;
 }

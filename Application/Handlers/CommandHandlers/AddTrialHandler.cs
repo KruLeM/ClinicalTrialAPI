@@ -1,4 +1,6 @@
 ﻿using Application.Commands;
+using Application.DTOMappers;
+using Application.DTOs;
 using Application.Exceptions;
 using Domain.Entities;
 using Domain.Repositories;
@@ -7,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Handlers.CommandHandlers
 {
-    public class AddTrialHandler : IRequestHandler<AddTrialCommand, ClinicalTrial>
+    public class AddTrialHandler : IRequestHandler<AddTrialCommand, ClinicalTrialDTO>
     {
         private readonly ICommandRepository<ClinicalTrial> _commandRepository;
         private readonly IQueryRepository<ClinicalTrial> _queryRepository;
@@ -20,7 +22,7 @@ namespace Application.Handlers.CommandHandlers
             _logger = logger;
         }
 
-        public async Task<ClinicalTrial> Handle(AddTrialCommand request, CancellationToken cancellationToken)
+        public async Task<ClinicalTrialDTO> Handle(AddTrialCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -58,8 +60,7 @@ namespace Application.Handlers.CommandHandlers
                                 : 0
                 };
 
-                var result = await _commandRepository.AddTrialAsync(trial);
-                return result;
+                return ClinicalTrialDTOMapper.EntityToDTO(await _commandRepository.AddTrialAsync(trial));
             }
             catch (Exception ex)
             {

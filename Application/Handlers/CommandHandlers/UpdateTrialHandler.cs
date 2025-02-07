@@ -1,4 +1,6 @@
 ﻿using Application.Commands;
+using Application.DTOMappers;
+using Application.DTOs;
 using Application.Exceptions;
 using Domain.Entities;
 using Domain.Repositories;
@@ -7,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Handlers.CommandHandlers
 {
-    public class UpdateTrialHandler : IRequestHandler<UpdateTrialCommand, ClinicalTrial>
+    public class UpdateTrialHandler : IRequestHandler<UpdateTrialCommand, ClinicalTrialDTO>
     {
         private readonly ICommandRepository<ClinicalTrial> _commandRepository;
         private readonly IQueryRepository<ClinicalTrial> _queryRepository;
@@ -20,7 +22,7 @@ namespace Application.Handlers.CommandHandlers
             _logger = logger;
         }
 
-        public async Task<ClinicalTrial> Handle(UpdateTrialCommand request, CancellationToken cancellationToken)
+        public async Task<ClinicalTrialDTO> Handle(UpdateTrialCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -48,15 +50,14 @@ namespace Application.Handlers.CommandHandlers
                 dbTrial.TrialId = request.TrialId;
                 dbTrial.Title = request.Title;
                 dbTrial.StartDate = request.StartDate;
-                dbTrial.EndDate = endDate;
+                dbTrial.EndDate = request.EndDate;
                 dbTrial.Participants = request.Participants;
                 dbTrial.Status = trialStatus;
                 dbTrial.Duration = endDate.HasValue
                                 ? (endDate.Value.ToDateTime(TimeOnly.MinValue) - request.StartDate.ToDateTime(TimeOnly.MinValue)).Days
                                 : 0;
 
-                var result = await _commandRepository.UpdateTrialAsync(dbTrial);
-                return result;
+                return ClinicalTrialDTOMapper.EntityToDTO(await _commandRepository.UpdateTrialAsync(dbTrial));
             }
             catch (Exception ex)
             {

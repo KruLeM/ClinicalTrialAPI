@@ -15,19 +15,24 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<ClinicalTrial>> GetAllAsync()
         {
-            //todo - ne vraca enum string nego enum int
-            return await _dbContext.ClinicalTrials.AsNoTracking().ToListAsync();
+            return await _dbContext.ClinicalTrials
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<ClinicalTrial> GetByIdAsync(string trialId)
         {
-            return await _dbContext.ClinicalTrials.FirstOrDefaultAsync(x => x.TrialId == trialId);
+            return await _dbContext.ClinicalTrials
+                .Where(ct => ct.TrialId == trialId)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<ClinicalTrial>> GetByStatusAsync(string trialStatus)
         {
             var trialStatusEnum = Enum.Parse<TrialStatus>(trialStatus.Replace(" ", ""));
-            return await _dbContext.ClinicalTrials.Where(x => x.Status == trialStatusEnum).ToListAsync();
+            return await _dbContext.ClinicalTrials
+                .Where(ct => ct.Status == trialStatusEnum)
+                .ToListAsync();
         }
     }
 }

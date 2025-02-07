@@ -1,21 +1,34 @@
-﻿using Application.Queries;
+﻿using Application.DTOMappers;
+using Application.DTOs;
+using Application.Queries;
 using Domain.Entities;
 using Domain.Repositories;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Handlers.QueryHandlers
 {
-    public class GetTrialByTrialIdHandler : IRequestHandler<GetTrialByTrialIdQuery, ClinicalTrial>
+    public class GetTrialByTrialIdHandler : IRequestHandler<GetTrialByTrialIdQuery, ClinicalTrialDTO>
     {
         private readonly IQueryRepository<ClinicalTrial> _queryRepository;
-        public GetTrialByTrialIdHandler(IQueryRepository<ClinicalTrial> queryRepository)
+        private readonly ILogger _logger;
+        public GetTrialByTrialIdHandler(IQueryRepository<ClinicalTrial> queryRepository, ILogger<GetTrialByTrialIdHandler> logger)
         {
             _queryRepository = queryRepository;
+            _logger = logger;
         }
 
-        public async Task<ClinicalTrial> Handle(GetTrialByTrialIdQuery request, CancellationToken cancellationToken)
+        public async Task<ClinicalTrialDTO> Handle(GetTrialByTrialIdQuery request, CancellationToken cancellationToken)
         {
-            return (ClinicalTrial) await _queryRepository.GetByIdAsync(request.trialId);
+            try
+            {
+                return ClinicalTrialDTOMapper.EntityToDTO(await _queryRepository.GetByIdAsync(request.trialId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Exception occured in handler: {nameof(GetTrialByTrialIdHandler)}");
+                throw;
+            }
         }
     }
 }

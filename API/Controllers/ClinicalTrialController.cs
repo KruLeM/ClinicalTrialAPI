@@ -59,7 +59,7 @@ namespace API.Controllers
 
                 var result = await _mediator.Send(updateTrial);
 
-                return Ok("Successful update");
+                return Ok(result);
             }
             catch (TrialDataException ex)
             {
