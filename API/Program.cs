@@ -7,6 +7,7 @@ using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Validation.Validators;
 using API.Exceptions;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,24 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Clinical Trial Service",
+        Description = "Tehnical task for 4Create interview",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "Mirko Kruscic",
+            Email = "krule988@gmail.com"
+        }
+    });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+    options.IncludeXmlComments(xmlPath);
+});
 builder.Services.AddScoped<ICommandRepository<ClinicalTrial>, ClinicalTrialCommandRepository>();
 builder.Services.AddScoped<IQueryRepository<ClinicalTrial>, ClinicalTrialQueryRepository>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddTrialHandler>());
