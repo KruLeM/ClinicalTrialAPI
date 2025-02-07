@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Exceptions;
+using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistance;
 
@@ -17,17 +18,31 @@ namespace Infrastructure.Repositories
 
         public async Task<ClinicalTrial> AddTrialAsync(ClinicalTrial trial)
         {
-            var result = await _dbContext.ClinicalTrials.AddAsync(trial);
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                var result = await _dbContext.ClinicalTrials.AddAsync(trial);
+                await _dbContext.SaveChangesAsync();
 
-            return result.Entity;
+                return result.Entity;
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("Error occurred while adding a trial", ex);
+            }
         }
         public async Task<ClinicalTrial> UpdateTrialAsync(ClinicalTrial trial)
         {
-            _dbContext.ClinicalTrials.Update(trial);
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                _dbContext.ClinicalTrials.Update(trial);
+                await _dbContext.SaveChangesAsync();
 
-            return trial;
+                return trial;
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("Error occurred while updating a trial.", ex);
+            }
         }
     }
 }

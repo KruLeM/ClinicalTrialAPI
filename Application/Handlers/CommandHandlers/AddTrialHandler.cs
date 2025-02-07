@@ -62,6 +62,11 @@ namespace Application.Handlers.CommandHandlers
 
                 return ClinicalTrialDTOMapper.EntityToDTO(await _commandRepository.AddTrialAsync(trial));
             }
+            catch (RepositoryException dbEx)
+            {
+                _logger.LogError(dbEx, $"Exception occurred while saving data in handler: {nameof(AddTrialHandler)}.");
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Exception occured in handler: {nameof(AddTrialHandler)}");

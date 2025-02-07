@@ -1,5 +1,6 @@
 ﻿using Application.DTOMappers;
 using Application.DTOs;
+using Application.Exceptions;
 using Application.Queries;
 using Domain.Entities;
 using Domain.Repositories;
@@ -23,6 +24,11 @@ namespace Application.Handlers.QueryHandlers
             try
             {
                 return ClinicalTrialDTOMapper.EntityToDTO(await _queryRepository.GetByIdAsync(request.trialId));
+            }
+            catch (RepositoryException dbEx)
+            {
+                _logger.LogError(dbEx, $"Exception occurred while retrieving data in handler: {nameof(GetTrialByTrialIdHandler)}.");
+                throw;
             }
             catch (Exception ex)
             {

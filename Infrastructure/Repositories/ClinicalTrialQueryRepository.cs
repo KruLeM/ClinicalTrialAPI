@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Exceptions;
+using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
@@ -15,24 +16,45 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<ClinicalTrial>> GetAllAsync()
         {
-            return await _dbContext.ClinicalTrials
+            try
+            {
+                return await _dbContext.ClinicalTrials
                 .AsNoTracking()
                 .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("Error occurred while getting data from db.", ex);
+            }
         }
 
         public async Task<ClinicalTrial> GetByIdAsync(string trialId)
         {
-            return await _dbContext.ClinicalTrials
-                .Where(ct => ct.TrialId == trialId)
-                .FirstOrDefaultAsync();
+            try
+            {
+                return await _dbContext.ClinicalTrials
+                        .Where(ct => ct.TrialId == trialId)
+                        .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("Error occurred while getting data from db.", ex);
+            }
         }
 
         public async Task<IEnumerable<ClinicalTrial>> GetByStatusAsync(string trialStatus)
         {
-            var trialStatusEnum = Enum.Parse<TrialStatus>(trialStatus.Replace(" ", ""));
-            return await _dbContext.ClinicalTrials
-                .Where(ct => ct.Status == trialStatusEnum)
-                .ToListAsync();
+            try
+            {
+                var trialStatusEnum = Enum.Parse<TrialStatus>(trialStatus.Replace(" ", ""));
+                return await _dbContext.ClinicalTrials
+                    .Where(ct => ct.Status == trialStatusEnum)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new RepositoryException("Error occurred while getting data from db.", ex);
+            }
         }
     }
 }
