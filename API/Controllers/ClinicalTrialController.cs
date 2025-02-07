@@ -1,6 +1,5 @@
 ﻿using Application.Commands;
 using Application.Exceptions;
-using Application.Handlers.QueryHandlers;
 using Application.Queries;
 using Domain.Entities;
 using Infrastructure.DTOs;
