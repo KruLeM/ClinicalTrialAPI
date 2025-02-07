@@ -1,5 +1,6 @@
 ﻿using Application.Commands;
 using Application.Exceptions;
+using Application.Handlers.QueryHandlers;
 using Application.Queries;
 using Domain.Entities;
 using Infrastructure.DTOs;
@@ -16,10 +17,12 @@ namespace API.Controllers
     {
         //TODO -> Add validaitons for GET endpoints
         private readonly IMediator _mediator;
+        private readonly ILogger _logger;
 
-        public ClinicalTrialController(IMediator mediator)
+        public ClinicalTrialController(IMediator mediator, ILogger<ClinicalTrialController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpPost(nameof(AddMedicalTrial))]
@@ -126,14 +129,22 @@ namespace API.Controllers
 
         private async Task<T> ReadAndDeserializeJson<T>(UploadJsonFileRequestDTO request) where T : class
         {
-            using var stream = new MemoryStream();
-            await request.File.CopyToAsync(stream);
-            stream.Position = 0;
+            try
+            {
+                using var stream = new MemoryStream();
+                await request.File.CopyToAsync(stream);
+                stream.Position = 0;
 
-            using var reader = new StreamReader(stream, Encoding.UTF8);
-            string fileContent = await reader.ReadToEndAsync();
+                using var reader = new StreamReader(stream, Encoding.UTF8);
+                string fileContent = await reader.ReadToEndAsync();
 
-            return JsonConvert.DeserializeObject<T>(fileContent);
+                return JsonConvert.DeserializeObject<T>(fileContent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Exception occured in method: {nameof(ReadAndDeserializeJson)}");
+                throw;
+            }
         }
     }
 }
