@@ -22,19 +22,12 @@ namespace Infrastructure.Validation.Validators
             RuleFor(x => x.Status)
                 .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage("Status must be populated.")
-                .Must(ValidateTrialStatus).WithMessage("Invalid status.");
+                .Must(IsValidEnumTrialStatus).WithMessage("Invalid status.");
         }
 
-        private bool ValidateTrialStatus(string status)
+        private bool IsValidEnumTrialStatus(string status)
         {
-            try
-            {
-                return Enum.IsDefined(typeof(TrialStatus), status.Replace(" ", ""));
-            }
-            catch
-            {
-                return false;
-            }
+            return Enum.TryParse(typeof(TrialStatus), status.Replace(" ", ""), true, out _);
         }
     }
 }
