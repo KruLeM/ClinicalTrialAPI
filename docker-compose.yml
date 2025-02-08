@@ -1,0 +1,21 @@
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: clinical_trial_api
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=localhost\\express22;Database=TestDB;User=mirko;Password=mirko123;
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: clinical_trial_mssql_server
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "s4C0mplic@t3D.?1C!"
+      ACCEPT_EULA: "Y"
