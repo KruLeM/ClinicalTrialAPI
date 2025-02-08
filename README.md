@@ -104,8 +104,3 @@ This service uses `.json` files to add or update a clinical trial.
    "additionalProperties": false
 }
 ```
-
-<br />
-
-
-## **JSON SCHEMA**
