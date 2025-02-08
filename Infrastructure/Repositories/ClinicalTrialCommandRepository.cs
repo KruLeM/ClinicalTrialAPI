@@ -6,8 +6,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories
 {
-    //Comment Mirko - Logika ide u application layer, sto znaci da bi Sampro Save isao u Applicaiton a ovde samo Add ili Update....
-    //Comment - po konvenciji, razdvajaju se update i insert
     public class ClinicalTrialCommandRepository : ICommandRepository<ClinicalTrial>
     {
         private readonly AppDbContext _dbContext;
