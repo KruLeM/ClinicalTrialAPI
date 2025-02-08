@@ -17,7 +17,6 @@ namespace API.Controllers
     [Tags("Clinical trials")]
     public class ClinicalTrialController : ControllerBase
     {
-        //TODO -> Add validaitons for GET endpoints
         private readonly IMediator _mediator;
         private readonly ILogger _logger;
 
