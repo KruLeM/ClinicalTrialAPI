@@ -1,7 +1,7 @@
 ﻿using Application.Commands;
 using Application.Exceptions;
 using Application.Queries;
-using API.Validation.DTOs;
+using API.Validation.RequestModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -41,7 +41,7 @@ namespace API.Controllers
         /// </response>
         /// <response code="500">If an internal server error occurs.</response>
         [HttpPost(nameof(AddMedicalTrial))]
-        public async Task<IActionResult> AddMedicalTrial([FromForm] UploadJsonFileRequestDTO request)
+        public async Task<IActionResult> AddMedicalTrial([FromForm] UploadJsonFileRequestModel request)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace API.Controllers
         /// </response>
         /// <response code="500">If an internal server error occurs.</response>
         [HttpPut(nameof(UpdateMedicalTrial))]
-        public async Task<IActionResult> UpdateMedicalTrial([FromForm] UploadJsonFileRequestDTO request)
+        public async Task<IActionResult> UpdateMedicalTrial([FromForm] UploadJsonFileRequestModel request)
         {
             try
             {
@@ -104,13 +104,23 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Get all clinical trials
+        /// Retrieves all clinical trials.
         /// </summary>
-        /// <returns>Retrieve the complete list of clinical trial details.</returns>
-        /// <response code="200">Returns the clinical trial list</response>
-        /// <response code="500">If an internal server error occurs.</response>
+        /// <returns>Returns the list of clinical trials.</returns>
+        /// <param name="Page">Optional parameter. Represents the current page you want to display.</param>
+        /// <param name="Size">Optional parameter. Represents the number of records per page.</param>
+        /// <remarks>
+        /// **Pagination (`Page` and `Size`):**
+        /// If both `Page` and `Size` parameters are provided, pagination will be applied; otherwise, all records will be returned.
+        /// - **`Page`**: Must be greater than 0 if provided.
+        /// - **`Size`**: Must be between 1 and 100 if provided. 
+        /// </remarks>
+        /// <response code="200">Returns the clinical trial list along with the total count, which helps in calculating total pages.</response>
+        /// <response code="400">If input parameters value is invalid</response>
+        /// <response code="500">Returned if an internal server error occurs.</response>
+
         [HttpGet(nameof(GetAllTrials))]
-        public async Task<IActionResult> GetAllTrials([FromQuery] PaginationQueryDTO paginationQueryDTO)
+        public async Task<IActionResult> GetAllTrials([FromQuery] PaginationQueryRequestModel paginationQueryDTO)
         {
             try
             {
@@ -123,7 +133,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Get clinical trial by Id
+        /// Retrieves the clinical trial by Id
         /// </summary>
         /// <param name="trialId">string parameter</param>
         /// <returns>Returns specific clinical trial detail</returns>
@@ -150,21 +160,28 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Get a clinical trial by status.
+        /// Retrieves a list of clinical trials filtered by status.
         /// </summary>
-        /// <param name="status">The status of the clinical trial.</param>
-        /// <returns>Returns a list of clinical trials with the specified status.</returns>
+        /// <returns>Returns a paginated list of clinical trials matching the specified status.</returns>
+        /// <param name="Status">Mandatory parameter. Represents the status of trials you want to retrieve.</param>
+        /// <param name="Page">Optional parameter. Represents the current page number to display.</param>
+        /// <param name="Size">Optional parameter. Represents the number of records per page.</param>
         /// <remarks>
-        /// Available status values:
+        /// **`Status` available values:**
         /// - **Not Started**: Trials that have not yet begun.
         /// - **Ongoing**: Trials that are currently active.
         /// - **Completed**: Trials that have finished.
+        ///
+        /// **Pagination (`Page` and `Size`):**
+        /// If both `Page` and `Size` parameters are provided, pagination will be applied; otherwise, all records with requested status will be returned.
+        /// - **`Page`**: Must be greater than 0 if provided.
+        /// - **`Size`**: Must be between 1 and 100 if provided.   
         /// </remarks>
-        /// <response code="200">Returns the list of clinical trials</response>
-        /// <response code="400">If the status value is invalid</response>
-        /// <response code="500">If an internal server error occurs.</response>
+        /// <response code="200">Returns the list of clinical trials filtered by the requested status, along with the total count of records matching that status. This helps in calculating the total number of pages.</response>
+        /// <response code="400">Returned if any input parameter value is invalid.</response>
+        /// <response code="500">Returned if an internal server error occurs.</response>
         [HttpGet(nameof(GetTrials))]
-        public async Task<IActionResult> GetTrials([FromQuery] GetTrialByStatusDTO getTrialByStatusDTO)
+        public async Task<IActionResult> GetTrials([FromQuery] GetTrialByStatusRequestModel getTrialByStatusDTO)
         {
             try
             {
@@ -178,7 +195,7 @@ namespace API.Controllers
             }
         }
 
-        private async Task<T> ReadAndDeserializeJson<T>(UploadJsonFileRequestDTO request) where T : class
+        private async Task<T> ReadAndDeserializeJson<T>(UploadJsonFileRequestModel request) where T : class
         {
             try
             {

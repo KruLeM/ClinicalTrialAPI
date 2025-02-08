@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using API.Validation.DTOs;
+using API.Validation.RequestModels;
 using API.Validation.Validators;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System.Text;
 
 
-namespace API.Test.Validators
+namespace API.Test.Validation.Validators
 {
     public class UploadJsonFileValidatorTests
     {
@@ -35,7 +35,7 @@ namespace API.Test.Validators
         public void Should_Have_Error_When_File_Is_Null()
         {
             // Arrange
-            var model = new UploadJsonFileRequestDTO();
+            var model = new UploadJsonFileRequestModel();
 
             // Act
             var result = _validator.TestValidate(model);
@@ -50,7 +50,7 @@ namespace API.Test.Validators
         {
             // Arrange
             var file = CreateMockFile("", length: 0);
-            var model = new UploadJsonFileRequestDTO { File = file };
+            var model = new UploadJsonFileRequestModel { File = file };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -65,7 +65,7 @@ namespace API.Test.Validators
         {
             // Arrange
             var file = CreateMockFile("{}", length: 3000);
-            var model = new UploadJsonFileRequestDTO { File = file };
+            var model = new UploadJsonFileRequestModel { File = file };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -80,7 +80,7 @@ namespace API.Test.Validators
         {
             // Arrange
             var file = CreateMockFile("<xml></xml>", fileName: "test.xml");
-            var model = new UploadJsonFileRequestDTO { File = file };
+            var model = new UploadJsonFileRequestModel { File = file };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -95,7 +95,7 @@ namespace API.Test.Validators
         {
             // Arrange
             var file = CreateMockFile("{ invalid json }");
-            var model = new UploadJsonFileRequestDTO { File = file };
+            var model = new UploadJsonFileRequestModel { File = file };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -111,7 +111,7 @@ namespace API.Test.Validators
             // Arrange
             var validJson = "{ \"trialId\": \"123e\", \"title\": \"Test 1b\",\"startDate\": \"2025-02-07\",\"participants\": 15,\"status\": \"Not Started\" }";
             var file = CreateMockFile(validJson);
-            var model = new UploadJsonFileRequestDTO { File = file };
+            var model = new UploadJsonFileRequestModel { File = file };
 
             // Act
             var result = _validator.TestValidate(model);

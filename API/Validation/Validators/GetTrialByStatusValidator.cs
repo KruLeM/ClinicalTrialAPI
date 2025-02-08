@@ -1,10 +1,10 @@
 ﻿using Domain.Entities;
 using FluentValidation;
-using API.Validation.DTOs;
+using API.Validation.RequestModels;
 
 namespace API.Validation.Validators
 {
-    public class GetTrialByStatusValidator : AbstractValidator<GetTrialByStatusDTO>
+    public class GetTrialByStatusValidator : AbstractValidator<GetTrialByStatusRequestModel>
     {
         public GetTrialByStatusValidator()
         {
@@ -14,10 +14,8 @@ namespace API.Validation.Validators
                .WithMessage("Page number must be greater than 0.");
 
             RuleFor(x => x.Size)
-               .GreaterThan(0)
-               .LessThanOrEqualTo(100)
-               .When(x => x.Size.HasValue)
-               .WithMessage("Size must be between 1 and 100.");
+                .Must(size => !size.HasValue || (size.Value > 0 && size.Value <= 100))
+                .WithMessage("Size must be greather then 0 and less or equal to 100.");
 
             RuleFor(x => x.Status)
                 .Cascade(CascadeMode.Stop)

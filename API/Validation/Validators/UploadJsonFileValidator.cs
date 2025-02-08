@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
-using API.Validation.DTOs;
+using API.Validation.RequestModels;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System.Text;
 
 namespace API.Validation.Validators
 {
-    public class UploadJsonFileValidator : AbstractValidator<UploadJsonFileRequestDTO>
+    public class UploadJsonFileValidator : AbstractValidator<UploadJsonFileRequestModel>
     {
         private readonly JSchema _jsonSchema;
 

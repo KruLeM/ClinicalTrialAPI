@@ -52,7 +52,7 @@ namespace Infrastructure.Test.Repositories
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetAllAsync();
+            var result = await _repository.GetAllAsync(null, null);
 
             // Assert
             Assert.Equal(2, result.Count());
@@ -119,7 +119,7 @@ namespace Infrastructure.Test.Repositories
             await _dbContext.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetByStatusAsync("NotStarted");
+            var result = await _repository.GetByStatusAsync("NotStarted", null, null);
 
             // Assert
             Assert.Single(result);
@@ -130,7 +130,7 @@ namespace Infrastructure.Test.Repositories
         public async Task GetByStatusAsync_ShouldThrowRepositoryException_OnInvalidStatus()
         {
             // Act & Assert
-            await Assert.ThrowsAsync<RepositoryException>(() => _repository.GetByStatusAsync("InvalidStatus"));
+            await Assert.ThrowsAsync<RepositoryException>(() => _repository.GetByStatusAsync("InvalidStatus", null, null));
             _mockLogger.Verify(l => l.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
@@ -147,7 +147,7 @@ namespace Infrastructure.Test.Repositories
             _dbContext.Dispose();
 
             // Act & Assert
-            await Assert.ThrowsAsync<RepositoryException>(() => _repository.GetAllAsync());
+            await Assert.ThrowsAsync<RepositoryException>(() => _repository.GetAllAsync(null, null));
             _mockLogger.Verify(l => l.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),

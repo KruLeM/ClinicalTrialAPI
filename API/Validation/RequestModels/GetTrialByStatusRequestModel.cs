@@ -1,6 +1,6 @@
-﻿namespace API.Validation.DTOs
+﻿namespace API.Validation.RequestModels
 {
-    public class GetTrialByStatusDTO
+    public class GetTrialByStatusRequestModel
     {
         public string Status {  get; set; }
         public int? Page {  get; set; }
