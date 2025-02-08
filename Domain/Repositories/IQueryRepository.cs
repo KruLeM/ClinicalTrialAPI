@@ -5,6 +5,7 @@
         Task<IEnumerable<T>> GetAllAsync(int? page, int? size);
         Task<int> GetAllCountAsync();
         Task<T> GetByIdAsync(string id);
-        Task<IEnumerable<T>> GetByStatusAsync(string status);
+        Task<IEnumerable<T>> GetByStatusAsync(string status, int? page, int? size);
+        Task<int> GetCountByStatusAsync(string status);
     }
 }

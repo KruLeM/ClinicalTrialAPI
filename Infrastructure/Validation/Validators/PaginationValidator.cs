@@ -14,7 +14,7 @@ namespace Infrastructure.Validation.Validators
 
             RuleFor(x => x.Size)
                .GreaterThan(0)
-               .LessThan(100)
+               .LessThanOrEqualTo(100)
                .When(x => x.Size.HasValue)
                .WithMessage("Size must be between 1 and 100.");
         }

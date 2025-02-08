@@ -39,7 +39,6 @@ namespace Infrastructure.Repositories
                 throw new RepositoryException("Error occurred while getting data from db.", ex);
             }
         }
-
         public async Task<int> GetAllCountAsync()
         {
             try
@@ -50,7 +49,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Exception occurred while retrieving data. Repository: {nameof(ClinicalTrialQueryRepository)}, method: {nameof(GetAllAsync)}.");
+                _logger.LogError(ex, $"Exception occurred while retrieving data. Repository: {nameof(ClinicalTrialQueryRepository)}, method: {nameof(GetAllCountAsync)}.");
                 throw new RepositoryException("Error occurred while getting data from db.", ex);
             }
         }
@@ -70,14 +69,18 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<ClinicalTrial>> GetByStatusAsync(string trialStatus)
+        public async Task<IEnumerable<ClinicalTrial>> GetByStatusAsync(string trialStatus, int? page, int? size)
         {
             try
             {
-                var trialStatusEnum = Enum.Parse<TrialStatus>(trialStatus.Replace(" ", ""));
-                return await _dbContext.ClinicalTrials
-                    .Where(ct => ct.Status == trialStatusEnum)
-                    .ToListAsync();
+                var query = PrepareQueryForGetTrialsByStatus(trialStatus);
+
+                if (page.HasValue && size.HasValue)
+                {
+                    query = query.Skip((page.Value - 1) * size.Value).Take(size.Value);
+                }
+
+                return await query.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -85,5 +88,28 @@ namespace Infrastructure.Repositories
                 throw new RepositoryException("Error occurred while getting data from db.", ex);
             }
         }
+        public async Task<int> GetCountByStatusAsync(string trialStatus)
+        {
+            try
+            {
+                var query = PrepareQueryForGetTrialsByStatus(trialStatus);
+                int totalCount = await query.CountAsync();
+
+                return totalCount;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Exception occurred while retrieving data. Repository: {nameof(ClinicalTrialQueryRepository)}, method: {nameof(GetCountByStatusAsync)}.");
+                throw new RepositoryException("Error occurred while getting data from db.", ex);
+            }
+        }
+        private IQueryable<ClinicalTrial> PrepareQueryForGetTrialsByStatus(string trialStatus)
+        {
+            var trialStatusEnum = Enum.Parse<TrialStatus>(trialStatus.Replace(" ", ""));
+            var query = _dbContext.ClinicalTrials.Where(ct => ct.Status == trialStatusEnum);
+
+            return query;
+        }
+
     }
 }

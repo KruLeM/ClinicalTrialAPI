@@ -109,7 +109,6 @@ namespace API.Controllers
         /// </summary>
         /// <returns>Retrieve the complete list of clinical trial details.</returns>
         /// <response code="200">Returns the clinical trial list</response>
-        /// <response code="404">If no clinical trials are found</response>
         /// <response code="500">If an internal server error occurs.</response>
         [HttpGet(nameof(GetAllTrials))]
         public async Task<IActionResult> GetAllTrials([FromQuery] PaginationQueryDTO paginationQueryDTO)
@@ -164,22 +163,13 @@ namespace API.Controllers
         /// </remarks>
         /// <response code="200">Returns the list of clinical trials</response>
         /// <response code="400">If the status value is invalid</response>
-        /// <response code="404">If no clinical trials are found</response>
         /// <response code="500">If an internal server error occurs.</response>
         [HttpGet(nameof(GetTrials))]
-        public async Task<IActionResult> GetTrials(string status)
+        public async Task<IActionResult> GetTrials([FromQuery] GetTrialByStatusDTO getTrialByStatusDTO)
         {
             try
             {
-                if (!Enum.IsDefined(typeof(TrialStatus), status.Replace(" ", "")))
-                {
-                    return BadRequest("Invalid parameter");
-                }
-                var response = await _mediator.Send(new GetTrialByStatusQuery(status));
-                if (response == null)
-                {
-                    return NotFound();
-                }
+                var response = await _mediator.Send(new GetTrialByStatusQuery(getTrialByStatusDTO.Status, getTrialByStatusDTO.Page, getTrialByStatusDTO.Size));
 
                 return Ok(response);
             }

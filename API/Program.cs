@@ -44,6 +44,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UploadJsonFileValidator>());
 //builder.Services.AddValidatorsFromAssemblyContaining<UploadJsonFileValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<PaginationValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<GetTrialByStatusValidator>();
 
 var app = builder.Build();
 
