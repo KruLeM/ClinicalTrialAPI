@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Application.Returns;
+using Application.Responses;
 using MediatR;
 
 namespace Application.Queries

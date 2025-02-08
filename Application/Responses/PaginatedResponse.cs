@@ -1,4 +1,4 @@
-﻿namespace Application.Returns
+﻿namespace Application.Responses
 {
     public class PaginatedResponse<T> where T : class
     {

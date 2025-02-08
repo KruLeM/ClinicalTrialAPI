@@ -2,7 +2,7 @@
 using Application.DTOs;
 using Application.Exceptions;
 using Application.Queries;
-using Application.Returns;
+using Application.Responses;
 using Domain.Entities;
 using Domain.Repositories;
 using MediatR;
