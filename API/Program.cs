@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Infrastructure.Validation.Validators;
 using API.Exceptions;
 using System.Reflection;
+using FluentValidation;
+using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +42,8 @@ builder.Services.AddScoped<IQueryRepository<ClinicalTrial>, ClinicalTrialQueryRe
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddTrialHandler>());
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UploadJsonFileValidator>());
+//builder.Services.AddValidatorsFromAssemblyContaining<UploadJsonFileValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<PaginationValidator>();
 
 var app = builder.Build();
 

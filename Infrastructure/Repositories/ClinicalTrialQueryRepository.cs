@@ -18,13 +18,35 @@ namespace Infrastructure.Repositories
             _logger = logger;
         }
 
-        public async Task<IEnumerable<ClinicalTrial>> GetAllAsync()
+        public async Task<IEnumerable<ClinicalTrial>> GetAllAsync(int? page, int? size)
         {
             try
             {
-                return await _dbContext.ClinicalTrials
-                .AsNoTracking()
-                .ToListAsync();
+                var query = _dbContext.ClinicalTrials.AsQueryable();
+
+                if (page.HasValue && size.HasValue)
+                {
+                    query = query.Skip((page.Value - 1) * size.Value).Take(size.Value);
+                }
+
+                return await query
+                    .AsNoTracking()
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Exception occurred while retrieving data. Repository: {nameof(ClinicalTrialQueryRepository)}, method: {nameof(GetAllAsync)}.");
+                throw new RepositoryException("Error occurred while getting data from db.", ex);
+            }
+        }
+
+        public async Task<int> GetAllCountAsync()
+        {
+            try
+            {
+                int totalCount = await _dbContext.ClinicalTrials.CountAsync();
+
+                return totalCount;
             }
             catch (Exception ex)
             {

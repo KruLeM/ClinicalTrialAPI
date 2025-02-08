@@ -112,11 +112,11 @@ namespace API.Controllers
         /// <response code="404">If no clinical trials are found</response>
         /// <response code="500">If an internal server error occurs.</response>
         [HttpGet(nameof(GetAllTrials))]
-        public async Task<IActionResult> GetAllTrials()
+        public async Task<IActionResult> GetAllTrials([FromQuery] PaginationQueryDTO paginationQueryDTO)
         {
             try
             {
-                return Ok(await _mediator.Send(new GetTrialsQuery()));
+                return Ok(await _mediator.Send(new GetTrialsQuery(paginationQueryDTO.Page, paginationQueryDTO.Size)));
             }
             catch (Exception)
             {
