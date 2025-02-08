@@ -25,8 +25,10 @@ namespace Application.Test.Handlers.QueryHandlers
         public async Task Handle_ReturnsClinicalTrialDTOs_WhenRepositoryReturnsData()
         {
             // Arrange
-            var status = "Active";
-            var query = new GetTrialByStatusQuery(status);
+            var status = "Completed";
+            var page = 1;
+            var size = 10;
+            var query = new GetTrialByStatusQuery(status, page, size);
             var trials = new List<ClinicalTrial>
             {
                 new ClinicalTrial {
@@ -34,26 +36,21 @@ namespace Application.Test.Handlers.QueryHandlers
                     Title = "Trial 1",
                     StartDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(5),
                     Participants = It.IsAny<int>(),
-                    Status = TrialStatus.NotStarted
-                },
-                new ClinicalTrial {
-                    TrialId = Guid.NewGuid().ToString(),
-                    Title = "Trial 2",
-                    StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
-                    EndDate = DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(2),
-                    Participants = It.IsAny<int>(),
-                    Status = TrialStatus.Ongoing,
-                    Duration = 30
+                    Status = TrialStatus.Completed
                 }
             };
-            _queryRepositoryMock.Setup(repo => repo.GetByStatusAsync(status)).ReturnsAsync(trials);
+            var count = trials.Count;
+
+            _queryRepositoryMock.Setup(repo => repo.GetByStatusAsync(status, page, size)).ReturnsAsync(trials);
+            _queryRepositoryMock.Setup(repo => repo.GetCountByStatusAsync(status)).ReturnsAsync(count);
 
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(2, result.Count());
+            Assert.Equal(count, result.TotalCount);
+            Assert.Single(result.Data);
         }
 
         [Fact]
@@ -61,8 +58,8 @@ namespace Application.Test.Handlers.QueryHandlers
         {
             // Arrange
             var status = "Active";
-            var query = new GetTrialByStatusQuery(status);
-            _queryRepositoryMock.Setup(repo => repo.GetByStatusAsync(status)).ThrowsAsync(new RepositoryException("Database error"));
+            var query = new GetTrialByStatusQuery(status, null, null);
+            _queryRepositoryMock.Setup(repo => repo.GetByStatusAsync(status, null, null)).ThrowsAsync(new RepositoryException("Database error"));
 
             // Act & Assert
             await Assert.ThrowsAsync<RepositoryException>(() => _handler.Handle(query, CancellationToken.None));
@@ -73,8 +70,8 @@ namespace Application.Test.Handlers.QueryHandlers
         {
             // Arrange
             var status = "Active";
-            var query = new GetTrialByStatusQuery(status);
-            _queryRepositoryMock.Setup(repo => repo.GetByStatusAsync(status)).ThrowsAsync(new Exception("Unexpected error"));
+            var query = new GetTrialByStatusQuery(status, null, null);
+            _queryRepositoryMock.Setup(repo => repo.GetByStatusAsync(status, null, null)).ThrowsAsync(new Exception("Unexpected error"));
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _handler.Handle(query, CancellationToken.None));

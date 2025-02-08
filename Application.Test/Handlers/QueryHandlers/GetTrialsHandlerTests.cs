@@ -22,9 +22,12 @@ namespace Application.Test.Handlers.QueryHandlers
         }
 
         [Fact]
-        public async Task Handle_ShouldReturnClinicalTrialDTOs_WhenRepositoryReturnsData()
+        public async Task Handle_ReturnsPaginatedResponse_WhenDataExists()
         {
             // Arrange
+            var page = 1;
+            var size = 10;
+            var query = new GetTrialsQuery(page, size);
             var trials = new List<ClinicalTrial>
             {
                 new ClinicalTrial {
@@ -44,37 +47,40 @@ namespace Application.Test.Handlers.QueryHandlers
                     Duration = 30
                 }
             };
+            var count = trials.Count;
 
-            _mockRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(trials);
+            _mockRepository.Setup(repo => repo.GetAllAsync(page, size)).ReturnsAsync(trials);
+            _mockRepository.Setup(repo => repo.GetAllCountAsync()).ReturnsAsync(count);
 
             // Act
-            var result = await _handler.Handle(new GetTrialsQuery(), CancellationToken.None);
+            var result = await _handler.Handle(query, CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(2, result.Count());
+            Assert.Equal(count, result.Data.Count());
+            Assert.Equal(count, result.TotalCount);
         }
 
         [Fact]
         public async Task Handle_ShouldThrowRepositoryException_WhenRepositoryThrowsRepositoryException()
         {
             // Arrange
-            _mockRepository.Setup(repo => repo.GetAllAsync()).ThrowsAsync(new RepositoryException("Repository error"));
+            _mockRepository.Setup(repo => repo.GetAllAsync(null, null)).ThrowsAsync(new RepositoryException("Repository error"));
 
             // Act & Assert
             await Assert.ThrowsAsync<RepositoryException>(async () =>
-                await _handler.Handle(new GetTrialsQuery(), CancellationToken.None));
+                await _handler.Handle(new GetTrialsQuery(null, null), CancellationToken.None));
         }
 
         [Fact]
         public async Task Handle_ShouldLogErrorAndThrowException_WhenUnexpectedExceptionOccurs()
         {
             // Arrange
-            _mockRepository.Setup(repo => repo.GetAllAsync()).ThrowsAsync(new Exception("Unexpected error"));
+            _mockRepository.Setup(repo => repo.GetAllAsync(null, null)).ThrowsAsync(new Exception("Unexpected error"));
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () =>
-                await _handler.Handle(new GetTrialsQuery(), CancellationToken.None));
+                await _handler.Handle(new GetTrialsQuery(null, null), CancellationToken.None));
 
             _mockLogger.Verify(
                 x => x.Log(
