@@ -117,7 +117,6 @@ namespace API.Controllers
         /// <response code="200">Returns the clinical trial list along with the total count, which helps in calculating total pages.</response>
         /// <response code="400">If input parameters value is invalid</response>
         /// <response code="500">Returned if an internal server error occurs.</response>
-
         [HttpGet(nameof(GetAllTrials))]
         public async Task<IActionResult> GetAllTrials([FromQuery] PaginationQueryRequestModel paginationQueryDTO)
         {

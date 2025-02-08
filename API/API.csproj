@@ -9,6 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Resources\clinical-trial-json-shema.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Resources\clinical-trial-json-shema.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
