@@ -1,11 +1,10 @@
 ﻿using FluentValidation;
-using Infrastructure.DTOs;
-using Microsoft.AspNetCore.Http;
+using API.Validation.DTOs;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System.Text;
 
-namespace Infrastructure.Validation.Validators
+namespace API.Validation.Validators
 {
     public class UploadJsonFileValidator : AbstractValidator<UploadJsonFileRequestDTO>
     {

@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Validation
+﻿namespace API.Validation
 {
     internal static class ValidationConstants
     {

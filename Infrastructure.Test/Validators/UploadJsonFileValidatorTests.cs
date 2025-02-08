@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Infrastructure.DTOs;
-using Infrastructure.Validation.Validators;
+using API.Validation.DTOs;
+using API.Validation.Validators;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using System.Text;
 
 
-namespace Infrastructure.Test.Validators
+namespace API.Test.Validators
 {
     public class UploadJsonFileValidatorTests
     {

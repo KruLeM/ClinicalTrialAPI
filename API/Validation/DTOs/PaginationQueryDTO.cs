@@ -1,5 +1,4 @@
-﻿
-namespace Infrastructure.DTOs
+﻿namespace API.Validation.DTOs
 {
     public class PaginationQueryDTO
     {

@@ -1,8 +1,7 @@
 ﻿using Application.Commands;
 using Application.Exceptions;
 using Application.Queries;
-using Domain.Entities;
-using Infrastructure.DTOs;
+using API.Validation.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

@@ -6,7 +6,7 @@ using Domain.Entities;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
-using Infrastructure.DTOs;
+using API.Validation.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

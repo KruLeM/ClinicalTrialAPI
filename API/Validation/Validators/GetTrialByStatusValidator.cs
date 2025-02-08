@@ -1,8 +1,8 @@
 ﻿using Domain.Entities;
 using FluentValidation;
-using Infrastructure.DTOs;
+using API.Validation.DTOs;
 
-namespace Infrastructure.Validation.Validators
+namespace API.Validation.Validators
 {
     public class GetTrialByStatusValidator : AbstractValidator<GetTrialByStatusDTO>
     {

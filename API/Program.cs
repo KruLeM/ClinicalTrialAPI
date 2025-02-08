@@ -5,11 +5,10 @@ using FluentValidation.AspNetCore;
 using Infrastructure.Persistance;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Infrastructure.Validation.Validators;
+using API.Validation.Validators;
 using API.Exceptions;
 using System.Reflection;
 using FluentValidation;
-using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
