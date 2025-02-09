@@ -39,9 +39,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<ICommandRepository<ClinicalTrial>, ClinicalTrialCommandRepository>();
 builder.Services.AddScoped<IQueryRepository<ClinicalTrial>, ClinicalTrialQueryRepository>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AddTrialHandler>());
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionDocker")));
 builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UploadJsonFileValidator>());
-//builder.Services.AddValidatorsFromAssemblyContaining<UploadJsonFileValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<PaginationValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<GetTrialByStatusValidator>();
 
@@ -61,5 +60,18 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    try
+    {
+        dbContext.Database.Migrate();
+    }
+    catch (Exception)
+    {
+    }
+}
 
 app.Run();

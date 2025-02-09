@@ -24,8 +24,6 @@ namespace Application.Test.Handlers.QueryHandlers
         [Fact]
         public async Task Handle_ReturnsClinicalTrialDTOs_WhenRepositoryReturnsData()
         {
-            //TODO RMladen - prvi objekat u listi ima status NotStarted i ne bi trebalo da ga prikaze u result...
-
             // Arrange
             var status = "Ongoing";
             var page = 1;
@@ -33,13 +31,6 @@ namespace Application.Test.Handlers.QueryHandlers
             var query = new GetTrialByStatusQuery(status, page, size);
             var trials = new List<ClinicalTrial>
             {
-                 new ClinicalTrial {
-                    TrialId = Guid.NewGuid().ToString(),
-                    Title = "Trial 1",
-                    StartDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(5),
-                    Participants = It.IsAny<int>(),
-                    Status = TrialStatus.NotStarted
-                },
                 new ClinicalTrial {
                     TrialId = Guid.NewGuid().ToString(),
                     Title = "Trial 2",

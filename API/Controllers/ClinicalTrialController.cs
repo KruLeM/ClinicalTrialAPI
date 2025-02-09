@@ -151,7 +151,7 @@ namespace API.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
@@ -187,7 +187,7 @@ namespace API.Controllers
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
