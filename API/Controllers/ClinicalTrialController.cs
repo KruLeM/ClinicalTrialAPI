@@ -124,7 +124,7 @@ namespace API.Controllers
             {
                 return Ok(await _mediator.Send(new GetTrialsQuery(paginationQueryDTO.Page, paginationQueryDTO.Size)));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
             }
